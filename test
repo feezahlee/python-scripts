@@ -4,78 +4,174 @@ Building in workspace /var/lib/jenkins/workspace/apache script
 Selected Git installation does not exist. Using Default
 The recommended git tool is: NONE
 No credentials specified
-Cloning the remote Git repository
-Cloning repository https://github.com/feezahlee/python-scripts.git
- > git init /var/lib/jenkins/workspace/apache script # timeout=10
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/apache script/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/feezahlee/python-scripts.git # timeout=10
 Fetching upstream changes from https://github.com/feezahlee/python-scripts.git
  > git --version # timeout=10
  > git --version # 'git version 2.43.0'
  > git fetch --tags --force --progress -- https://github.com/feezahlee/python-scripts.git +refs/heads/*:refs/remotes/origin/* # timeout=10
- > git config remote.origin.url https://github.com/feezahlee/python-scripts.git # timeout=10
- > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
-Avoid second fetch
  > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
-Checking out Revision 7abafd439716e936f08602c6a8b09132ff911e2b (refs/remotes/origin/main)
+Checking out Revision 3860735f6f4b410cacc679ad2e9e34aa506e18b7 (refs/remotes/origin/main)
  > git config core.sparsecheckout # timeout=10
- > git checkout -f 7abafd439716e936f08602c6a8b09132ff911e2b # timeout=10
-Commit message: "Add files via upload"
+ > git checkout -f 3860735f6f4b410cacc679ad2e9e34aa506e18b7 # timeout=10
+Commit message: "Update test"
 First time build. Skipping changelog.
-[apache script] $ /bin/sh -xe /tmp/jenkins16713069912683771205.sh
+[apache script] $ /bin/sh -xe /tmp/jenkins16809237008538946152.sh
 + python3 apache_secure.py
 Installing Apache and OpenSSL...
-Command 'sudo apt-get update' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
+Hit:1 http://sg.archive.ubuntu.com/ubuntu noble InRelease
+Hit:2 http://sg.archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:3 http://sg.archive.ubuntu.com/ubuntu noble-backports InRelease
+Ign:4 https://pkg.jenkins.io/debian binary/ InRelease
+Hit:5 https://pkg.jenkins.io/debian binary/ Release
+Hit:7 http://security.ubuntu.com/ubuntu noble-security InRelease
+Reading package lists...
+ 
+Reading package lists...
+Building dependency tree...
+Reading state information...
+openssl is already the newest version (3.0.13-0ubuntu3.1).
+openssl set to manually installed.
+The following additional packages will be installed:
+  apache2-bin apache2-data apache2-utils libapr1t64 libaprutil1-dbd-sqlite3
+  libaprutil1-ldap libaprutil1t64
+Suggested packages:
+  apache2-doc apache2-suexec-pristine | apache2-suexec-custom
+The following NEW packages will be installed:
+  apache2 apache2-bin apache2-data apache2-utils libapr1t64
+  libaprutil1-dbd-sqlite3 libaprutil1-ldap libaprutil1t64
+0 upgraded, 8 newly installed, 0 to remove and 56 not upgraded.
+Need to get 1,896 kB of archives.
+After this operation, 7,452 kB of additional disk space will be used.
+Get:1 http://sg.archive.ubuntu.com/ubuntu noble/main amd64 libapr1t64 amd64 1.7.2-3.1build2 [107 kB]
+Get:2 http://sg.archive.ubuntu.com/ubuntu noble/main amd64 libaprutil1t64 amd64 1.6.3-1.1ubuntu7 [91.9 kB]
+Get:3 http://sg.archive.ubuntu.com/ubuntu noble/main amd64 libaprutil1-dbd-sqlite3 amd64 1.6.3-1.1ubuntu7 [11.2 kB]
+Get:4 http://sg.archive.ubuntu.com/ubuntu noble/main amd64 libaprutil1-ldap amd64 1.6.3-1.1ubuntu7 [9,116 B]
+Get:5 http://sg.archive.ubuntu.com/ubuntu noble-updates/main amd64 apache2-bin amd64 2.4.58-1ubuntu8.1 [1,327 kB]
+Get:6 http://sg.archive.ubuntu.com/ubuntu noble-updates/main amd64 apache2-data all 2.4.58-1ubuntu8.1 [163 kB]
+Get:7 http://sg.archive.ubuntu.com/ubuntu noble-updates/main amd64 apache2-utils amd64 2.4.58-1ubuntu8.1 [96.2 kB]
+Get:8 http://sg.archive.ubuntu.com/ubuntu noble-updates/main amd64 apache2 amd64 2.4.58-1ubuntu8.1 [90.2 kB]
+Fetched 1,896 kB in 1s (3,460 kB/s)
+Selecting previously unselected package libapr1t64:amd64.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 149378 files and directories currently installed.)
+Preparing to unpack .../0-libapr1t64_1.7.2-3.1build2_amd64.deb ...
+Unpacking libapr1t64:amd64 (1.7.2-3.1build2) ...
+Selecting previously unselected package libaprutil1t64:amd64.
+Preparing to unpack .../1-libaprutil1t64_1.6.3-1.1ubuntu7_amd64.deb ...
+Unpacking libaprutil1t64:amd64 (1.6.3-1.1ubuntu7) ...
+Selecting previously unselected package libaprutil1-dbd-sqlite3:amd64.
+Preparing to unpack .../2-libaprutil1-dbd-sqlite3_1.6.3-1.1ubuntu7_amd64.deb ...
+Unpacking libaprutil1-dbd-sqlite3:amd64 (1.6.3-1.1ubuntu7) ...
+Selecting previously unselected package libaprutil1-ldap:amd64.
+Preparing to unpack .../3-libaprutil1-ldap_1.6.3-1.1ubuntu7_amd64.deb ...
+Unpacking libaprutil1-ldap:amd64 (1.6.3-1.1ubuntu7) ...
+Selecting previously unselected package apache2-bin.
+Preparing to unpack .../4-apache2-bin_2.4.58-1ubuntu8.1_amd64.deb ...
+Unpacking apache2-bin (2.4.58-1ubuntu8.1) ...
+Selecting previously unselected package apache2-data.
+Preparing to unpack .../5-apache2-data_2.4.58-1ubuntu8.1_all.deb ...
+Unpacking apache2-data (2.4.58-1ubuntu8.1) ...
+Selecting previously unselected package apache2-utils.
+Preparing to unpack .../6-apache2-utils_2.4.58-1ubuntu8.1_amd64.deb ...
+Unpacking apache2-utils (2.4.58-1ubuntu8.1) ...
+Selecting previously unselected package apache2.
+Preparing to unpack .../7-apache2_2.4.58-1ubuntu8.1_amd64.deb ...
+Unpacking apache2 (2.4.58-1ubuntu8.1) ...
+Setting up libapr1t64:amd64 (1.7.2-3.1build2) ...
+Setting up apache2-data (2.4.58-1ubuntu8.1) ...
+Setting up libaprutil1t64:amd64 (1.6.3-1.1ubuntu7) ...
+Setting up libaprutil1-ldap:amd64 (1.6.3-1.1ubuntu7) ...
+Setting up libaprutil1-dbd-sqlite3:amd64 (1.6.3-1.1ubuntu7) ...
+Setting up apache2-utils (2.4.58-1ubuntu8.1) ...
+Setting up apache2-bin (2.4.58-1ubuntu8.1) ...
+Setting up apache2 (2.4.58-1ubuntu8.1) ...
+Enabling module mpm_event.
+Enabling module authz_core.
+Enabling module authz_host.
+Enabling module authn_core.
+Enabling module auth_basic.
+Enabling module access_compat.
+Enabling module authn_file.
+Enabling module authz_user.
+Enabling module alias.
+Enabling module dir.
+Enabling module autoindex.
+Enabling module env.
+Enabling module mime.
+Enabling module negotiation.
+Enabling module setenvif.
+Enabling module filter.
+Enabling module deflate.
+Enabling module status.
+Enabling module reqtimeout.
+Enabling conf charset.
+Enabling conf localized-error-pages.
+Enabling conf other-vhosts-access-log.
+Enabling conf security.
+Enabling conf serve-cgi-bin.
+Enabling site 000-default.
+Created symlink /etc/systemd/system/multi-user.target.wants/apache2.service → /usr/lib/systemd/system/apache2.service.
 
-None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
+Created symlink /etc/systemd/system/multi-user.target.wants/apache-htcacheclean.service → /usr/lib/systemd/system/apache-htcacheclean.service.
 
-Command 'sudo apt-get install -y apache2 openssl' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
-
-None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
+Processing triggers for ufw (0.36.2-6) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.2) ...
+ debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+dpkg-preconfigure: unable to re-open stdin: 
 
 Enabling SSL module in Apache...
-Command 'sudo a2enmod ssl' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
-
-None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
-
+Considering dependency mime for ssl:
+Module mime already enabled
+Considering dependency socache_shmcb for ssl:
+Enabling module socache_shmcb.
+Enabling module ssl.
+See /usr/share/doc/apache2/README.Debian.gz on how to configure SSL and create self-signed certificates.
+To activate the new configuration, you need to run:
+  systemctl restart apache2
+ 
 Creating directory /etc/ssl/certs with mode 0o755...
 Creating directory /etc/ssl/private with mode 0o700...
 Generating a self-signed SSL certificate...
-Command 'sudo openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt -subj "/C=US/ST=State/L=City/O=Organization/OU=Department/CN=192.0.2.3"' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
-
-None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
+ ....+........+.+.....+.......+.....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.....+.....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*................+.....+.+...+...........+.+......+..+..........+.....+.......+...+...........+.........+.+..+.........................+...+...........+.+...+...............+.....+.+.....+...+.............+............+...+..+...+............+...+...+.......+...+.....+....+...+.................+...+.......+............+...........+...+......+.+..+...+.......+..+...+......+....+.....+...+...+......+.+.........+.....+...+.......+..............+.+...+...+...+..+.........+.+..............+...+...............+.......+.........+.....+.+...............+......+.........+.....+....+..............+...+.......+.....+..........+...+.....+...+.+.....+...+.+...........+....+...........+......+...+......+.............+...........................+...+......+..+.............+......+.....+.+..+.+..+.........+...+.............+.....+.........+...+.......+...+......+.........+...........+....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+....+.........+..+....+...+..+...+.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+...+............+........+............+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*...........+....+...........+.........+....+...+...+.....+.......+..+.+......+...........+....+......+...+..+.......+.....+......+.......+.........+......+.........+...+...........+......+...+...+....+...+..+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----
 
 Configuring Apache to listen on port 443...
-Command 'sudo sed -i 's/^#?Listen 443/Listen 443/' /etc/apache2/ports.conf' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
-
 Creating SSL Virtual Host file...
-Command 'sudo cp default-ssl.conf /etc/apache2/sites-available/default-ssl.conf' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
-
 Enabling SSL Virtual Host...
-Command 'sudo a2ensite default-ssl.conf' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
-
-None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
-
+Enabling site default-ssl.
+To activate the new configuration, you need to run:
+  systemctl reload apache2
+ 
 Restarting Apache server...
-Command 'sudo systemctl restart apache2' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
-
-None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
-sudo: a password is required
-
+ 
 Apache server with SSL has been configured successfully.
 Finished: SUCCESS
-
-
-
-jenkins ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /usr/bin/openssl, /usr/sbin/a2enmod, /usr/sbin/a2ensite, /bin/systemctl, /bin/sed, /bin/cp

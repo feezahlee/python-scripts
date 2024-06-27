@@ -75,3 +75,7 @@ sudo: a password is required
 
 Apache server with SSL has been configured successfully.
 Finished: SUCCESS
+
+
+
+jenkins ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /usr/bin/openssl, /usr/sbin/a2enmod, /usr/sbin/a2ensite, /bin/systemctl, /bin/sed, /bin/cp

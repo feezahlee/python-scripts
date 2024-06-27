@@ -1,0 +1,77 @@
+Started by user admin
+Running as SYSTEM
+Building in workspace /var/lib/jenkins/workspace/apache script
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/feezahlee/python-scripts.git
+ > git init /var/lib/jenkins/workspace/apache script # timeout=10
+Fetching upstream changes from https://github.com/feezahlee/python-scripts.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/feezahlee/python-scripts.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/feezahlee/python-scripts.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 7abafd439716e936f08602c6a8b09132ff911e2b (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 7abafd439716e936f08602c6a8b09132ff911e2b # timeout=10
+Commit message: "Add files via upload"
+First time build. Skipping changelog.
+[apache script] $ /bin/sh -xe /tmp/jenkins16713069912683771205.sh
++ python3 apache_secure.py
+Installing Apache and OpenSSL...
+Command 'sudo apt-get update' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+Command 'sudo apt-get install -y apache2 openssl' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+Enabling SSL module in Apache...
+Command 'sudo a2enmod ssl' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+Creating directory /etc/ssl/certs with mode 0o755...
+Creating directory /etc/ssl/private with mode 0o700...
+Generating a self-signed SSL certificate...
+Command 'sudo openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt -subj "/C=US/ST=State/L=City/O=Organization/OU=Department/CN=192.0.2.3"' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+Configuring Apache to listen on port 443...
+Command 'sudo sed -i 's/^#?Listen 443/Listen 443/' /etc/apache2/ports.conf' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+Creating SSL Virtual Host file...
+Command 'sudo cp default-ssl.conf /etc/apache2/sites-available/default-ssl.conf' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+Enabling SSL Virtual Host...
+Command 'sudo a2ensite default-ssl.conf' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+Restarting Apache server...
+Command 'sudo systemctl restart apache2' failed with error: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+None sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+
+Apache server with SSL has been configured successfully.
+Finished: SUCCESS

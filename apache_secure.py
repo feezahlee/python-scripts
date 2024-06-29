@@ -108,5 +108,5 @@ def main():
     restart_apache()
     print("Apache server with SSL has been configured successfully and testing.html is available.")
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()

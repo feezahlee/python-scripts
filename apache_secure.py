@@ -92,6 +92,14 @@ def restart_apache():
     stdout, stderr = run_command("sudo systemctl restart apache2")
     print(stdout, stderr)
 
+def copy_testing_html():
+    print("Copying testing.html to the Apache document root...")
+    run_command("sudo cp testing.html /var/www/html/")
+
+def remove_default_index_html():
+    print("Removing default index.html if it exists...")
+    run_command("sudo rm -f /var/www/html/index.html")
+
 # To call the fuctions.
 def main():
     install_apache_and_openssl()
@@ -102,6 +110,8 @@ def main():
     configure_apache_port()
     create_ssl_virtual_host()
     enable_ssl_virtual_host()
+    remove_default_index_html()
+    copy_testing_html()
     restart_apache()
     print("Apache server with SSL has been configured successfully.")
 

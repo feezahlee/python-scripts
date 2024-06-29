@@ -58,7 +58,7 @@ def create_ssl_virtual_host():
 <IfModule mod_ssl.c>
     <VirtualHost *:443>
         DocumentRoot /var/www/html
-        DirectoryIndex testing.html
+        DirectoryIndex index2.html
         SSLEngine on
         SSLCertificateFile {ssl_certificate_path}
         SSLCertificateKeyFile {ssl_certificate_key_path}

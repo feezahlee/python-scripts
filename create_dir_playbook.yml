@@ -1,0 +1,8 @@
+- name: create_directory
+  hosts: all
+  tasks:
+
+   - name: Creates directory
+     file:
+       path: ~/yanyan_is_very_tired
+       state: directory

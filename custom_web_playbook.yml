@@ -1,0 +1,46 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    disable_default: true
+
+  tasks:
+    - name: INSTALL APACHE2
+      apt: name=apache2 update_cache=yes state=latest
+
+    # - name: ENABLED MOD_REWRITE
+    #   apache2_module: name=rewrite state=present
+    #   notify:
+    #     - RESTART APACHE2
+
+    - name: START APACHE2
+      service:
+        name: apache2
+        state: started
+
+    - name: APACHE2 LISTEN ON PORT 80
+      lineinfile: dest=/etc/apache2/ports.conf regexp="^Listen 8081" line="Listen 80" state=present
+      notify:
+        - RESTART APACHE2
+ 
+    - name: APACHE2 VIRTUALHOST ON PORT 80
+      lineinfile: dest=/etc/apache2/sites-available/000-default.conf regexp="^<VirtualHost \*:8081>" line="<VirtualHost *:80>" state=present
+      notify:
+        - RESTART APACHE2
+
+    - name: Copy index test page / Copy custom index to DocumentRoot
+      template:
+        src: "files/index.html.j2"
+        dest: "/var/www/html/index.html"
+
+    - name: Disable default Apache site
+      shell: /usr/sbin/a2dissite 000-default.conf
+      when: disable_default
+      notify: Reload Apache
+
+  handlers:
+    - name: Reload Apache
+      service: name=apache2 state=reloaded
+
+    - name: RESTART APACHE2
+      service: name=apache2 state=restarted

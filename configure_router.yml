@@ -6,14 +6,14 @@
     - ansible.netcommon
   tasks:
     - name: Make sure the hostname is set up
-      cli_command:
+      ansible.netcommon.cli_command:
         command: |
           configure terminal
           hostname router2
           end
 
     - name: Configure the interface GigabitEthernet1
-      cli_command:
+      ansible.netcommon.cli_command:
         command: |
           configure terminal
           interface GigabitEthernet1
@@ -23,5 +23,5 @@
           end
 
     - name: Save configuration
-      cli_command:
+      ansible.netcommon.cli_command:
         command: write memory

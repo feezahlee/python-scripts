@@ -1,8 +1,6 @@
 ---
-
-# Playbook definition
 - name: Test connection to Cisco IOS Device
-  hosts: all
+  hosts: routers
   gather_facts: no
   tasks:
     - name: Test connectivity with ping

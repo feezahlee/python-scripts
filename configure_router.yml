@@ -1,6 +1,9 @@
 ---
 - name: Configure Router
   hosts: all
+  gather_facts: no
+  collections:
+    - cisco.ios
   tasks:
     - name: Make sure the hostname is set up
       cisco.ios.ios_config:

@@ -8,7 +8,3 @@ all:
       ansible_network_os: ios
       ansible_become: yes
       ansible_become_method: enable
-      
-[ssh_connection]
-# Disable SSH connections
-transport = network_cli

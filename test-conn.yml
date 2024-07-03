@@ -1,18 +1,8 @@
 ---
-# Inventory definition
-all:
-  hosts:
-    router1:
-      ansible_host: 192.168.56.108
-      ansible_user: cisco
-      ansible_password: cisco123!
-      ansible_connection: network_cli
-      ansible_network_os: ios
-      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
 # Playbook definition
 - name: Test connection to Cisco IOS Device
-  hosts: all
+  hosts: routers
   gather_facts: no
   tasks:
     - name: Test connectivity with ping

@@ -7,7 +7,7 @@
       ansible.builtin.shell: |
         enable
         configure terminal
-        hostname router2
+        hostname router1
         end
 
     - name: Configure the interface GigabitEthernet1

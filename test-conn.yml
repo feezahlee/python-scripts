@@ -2,12 +2,14 @@
 - name: Test connection to Cisco IOS Device
   hosts: csr1000v_router
   gather_facts: no
-  collections:
-    - cisco.ios
   tasks:
-    - name: Gather facts from the router
-      cisco.ios.ios_facts:
+    - name: Test connectivity with ping
+      ping:
 
-    - name: Display gathered facts
+    - name: Run a simple command to test connection
+      raw: show version
+      register: command_output
+
+    - name: Display command output
       debug:
-        var: ansible_facts
+        var: command_output.stdout_lines

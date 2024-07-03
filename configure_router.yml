@@ -1,4 +1,13 @@
 ---
+- name: Ensure cisco.ios collection is installed
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Install cisco.ios collection
+      ansible.builtin.command:
+        cmd: ansible-galaxy collection install cisco.ios
+      become: yes
+
 - name: Configure Router
   hosts: router1
   gather_facts: no
@@ -26,3 +35,5 @@
       ios_command:
         commands:
           - write memory
+
+

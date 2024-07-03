@@ -1,28 +1,26 @@
 ---
-- name: Configure Router using ios_command
+- name: Configure Router using shell
   hosts: router1
   gather_facts: no
-  collections:
-    - cisco.ios
   tasks:
     - name: Make sure the hostname is set up
-      cisco.ios.ios_command:
-        commands:
-          - configure terminal
-          - hostname router2
-          - end
+      ansible.builtin.shell: |
+        enable
+        configure terminal
+        hostname router2
+        end
 
     - name: Configure the interface GigabitEthernet1
-      cisco.ios.ios_command:
-        commands:
-          - configure terminal
-          - interface GigabitEthernet1
-          - ip address 192.168.56.108 255.255.255.0
-          - description Connected to LAN
-          - no shutdown
-          - end
+      ansible.builtin.shell: |
+        enable
+        configure terminal
+        interface GigabitEthernet1
+        ip address 192.168.56.108 255.255.255.0
+        description Connected to LAN
+        no shutdown
+        end
 
     - name: Save configuration
-      cisco.ios.ios_command:
-        commands:
-          - write memory
+      ansible.builtin.shell: |
+        enable
+        write memory

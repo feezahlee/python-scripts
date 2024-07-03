@@ -1,6 +1,6 @@
 ---
 - name: Configure Router using shell
-  hosts: router
+  hosts: router1
   gather_facts: no
   tasks:
     - name: Make sure the hostname is set up

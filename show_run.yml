@@ -1,0 +1,13 @@
+- name: Show running configuration on CSR1000v
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Get running configuration
+      ios_command:
+        commands:
+          - show running-config
+      register: show_run_output
+
+    - name: Display running configuration
+      debug:
+        msg: "{{ show_run_output.stdout[0] }}"

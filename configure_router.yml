@@ -1,21 +1,28 @@
 ---
 - name: Configure Router
-  hosts: all
+  hosts: router1
   gather_facts: no
+  collections:
+    - cisco.ios
   tasks:
     - name: Make sure the hostname is set up
-      shell: |
-        hostname router2
+      ios_config:
+        lines:
+          - hostname router2
 
     - name: Configure the interface GigabitEthernet1
-      shell: |
-        configure terminal
-        interface GigabitEthernet1
-        ip address 192.168.56.108 255.255.255.0
-        description Connected to LAN
-        no shutdown
-        exit
+      ios_config:
+        lines:
+          - interface GigabitEthernet1
+          - ip address 192.168.56.108 255.255.255.0
+          - description Connected to LAN
+          - no shutdown
+        before:
+          - interface GigabitEthernet1
+        after:
+          - exit
 
     - name: Save configuration
-      shell: |
-        write memory
+      ios_command:
+        commands:
+          - write memory

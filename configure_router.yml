@@ -1,6 +1,6 @@
 ---
 - name: Configure Router
-  hosts: router1
+  hosts: 192.168.56.108
   gather_facts: no
   collections:
     - cisco.ios

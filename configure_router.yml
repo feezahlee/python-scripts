@@ -12,7 +12,7 @@
       ios_config:
         lines:
           - interface GigabitEthernet1
-          - ip address 192.168.56.104 255.255.255.0
+          - ip address 192.168.56.108 255.255.255.0
           - description Connected to LAN
           - no shutdown
         before:

@@ -1,6 +1,7 @@
 - name: Show running configuration on CSR1000v
   hosts: all
   gather_facts: no
+  connection: network_cli
   tasks:
     - name: Get running configuration
       ios_command:

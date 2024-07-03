@@ -3,7 +3,7 @@
   hosts: router1
   gather_facts: no
   collections:
-    - ansible.netcommon
+    - cisco.ios
   tasks:
     - name: Make sure the hostname is set up
       ios_config:
@@ -26,5 +26,3 @@
       ios_command:
         commands:
           - write memory
-
-

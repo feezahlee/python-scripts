@@ -1,14 +1,17 @@
 ---
 - name: Configure Router
   hosts: all
+  gather_facts: no
+  collections:
+    - cisco.ios
   tasks:
     - name: Make sure the hostname is set up
-      cisco.ios.ios_config:
+      ios_config:
         lines:
           - hostname router1
 
     - name: Configure the interface GigabitEthernet1
-      cisco.ios.ios_config:
+      ios_config:
         lines:
           - interface GigabitEthernet1
           - ip address 192.168.56.108 255.255.255.0
@@ -20,6 +23,6 @@
           - exit
 
     - name: Save configuration
-      cisco.ios.ios_command:
+      ios_command:
         commands:
           - write memory

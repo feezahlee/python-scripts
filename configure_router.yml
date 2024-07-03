@@ -21,8 +21,19 @@
           - interface GigabitEthernet1
         after:
           - exit
-    
 
+    - name: Configure the interface GigabitEthernet2
+      ios_config:
+        lines:
+          - interface GigabitEthernet2
+          - ip address 192.168.56.109 255.255.255.0
+          - description Connected to LAN2
+          - no shutdown
+        before:
+          - interface GigabitEthernet2
+        after:
+          - exit
+    
     - name: Save configuration
       ios_command:
         commands:

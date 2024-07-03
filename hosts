@@ -1,3 +1,4 @@
-[router1]
-192.168.56.108 ansible_user=cisco ansible_password=cisco123! ansible_network_os=ios ansible_connection=network_cli ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+[routers]
+router1 ansible_host=192.168.56.101 ansible_user=admin ansible_password=admin ansible_network_os=ios ansible_connection=network_cli
+
 

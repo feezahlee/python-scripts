@@ -71,6 +71,16 @@ def create_ssl_virtual_host():
         BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
     </VirtualHost>
 </IfModule>
+
+<VirtualHost *:80>
+    DocumentRoot /var/www/html
+    DirectoryIndex index2.html
+    <Directory /var/www/html/>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
 """
     config_path = "/etc/apache2/sites-available/default-ssl.conf"
     with open("default-ssl.conf", 'w') as file:

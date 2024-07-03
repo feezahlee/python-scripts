@@ -1,6 +1,6 @@
 ---
 - name: Configure Router
-  hosts: router1
+  hosts: all
   gather_facts: no
   tasks:
     - name: Make sure the hostname is set up

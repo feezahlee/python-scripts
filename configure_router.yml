@@ -1,0 +1,28 @@
+---
+- name: Configure Router
+  hosts: router1
+  gather_facts: no
+  tasks:
+    - name: Make sure the hostname is set up
+      ios_config:
+        lines:
+          - hostname router2
+
+    - name: Configure the interface GigabitEthernet1
+      ios_config:
+        lines:
+          - interface GigabitEthernet1
+          - ip address 192.168.56.104 255.255.255.0
+          - description Connected to LAN
+          - no shutdown
+        before:
+          - interface GigabitEthernet1
+        after:
+          - exit
+    
+
+    - name: Save configuration
+      ios_command:
+        commands:
+          - write memory
+

@@ -1,26 +1,27 @@
 ---
-- name: Configure Router
+- name: Configure Router using cli_command
   hosts: router1
   gather_facts: no
+  collections:
+    - ansible.netcommon
   tasks:
     - name: Make sure the hostname is set up
-      ios_command:
-        commands:
-          - configure terminal
-          - hostname router2
-          - end
+      cli_command:
+        command: |
+          configure terminal
+          hostname router2
+          end
 
     - name: Configure the interface GigabitEthernet1
-      ios_command:
-        commands:
-          - configure terminal
-          - interface GigabitEthernet1
-          - ip address 192.168.56.108 255.255.255.0
-          - description Connected to LAN
-          - no shutdown
-          - end
+      cli_command:
+        command: |
+          configure terminal
+          interface GigabitEthernet1
+          ip address 192.168.56.108 255.255.255.0
+          description Connected to LAN
+          no shutdown
+          end
 
     - name: Save configuration
-      ios_command:
-        commands:
-          - write memory
+      cli_command:
+        command: write memory

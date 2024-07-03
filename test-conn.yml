@@ -1,6 +1,6 @@
 ---
 - name: Test connection to Cisco IOS Device
-  hosts: csr1000v_router
+  hosts: routers
   gather_facts: no
   tasks:
     - name: Test connectivity with ping

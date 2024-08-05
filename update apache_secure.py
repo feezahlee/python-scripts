@@ -3,7 +3,7 @@ import os
 
 ssl_certificate_path = "/etc/ssl/certs/apache-selfsigned.crt"
 ssl_certificate_key_path = "/etc/ssl/private/apache-selfsigned.key"
-server_name = "192.0.2.3"
+server_name = "192.168.2.2"
 container_name = "clab-firstlab-apache-server"
 
 def run_command(command, check=True):

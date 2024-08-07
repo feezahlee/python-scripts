@@ -1,0 +1,12 @@
+- name: Configure Apache inside Docker container
+  hosts: apache
+  tasks:
+    - name: Copy custom index.html
+      copy:
+        content: |
+<html>
+<body>
+<h1>hello world !! </h1>
+</body>
+</html>
+        dest: /usr/local/apache2/htdocs/index.html

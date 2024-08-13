@@ -1,2 +1,5 @@
 [apache]
 clab-firstlab-apache-server ansible_connection=docker
+
+[linux]
+clab-firstlab-linux-client ansible_connection=docker

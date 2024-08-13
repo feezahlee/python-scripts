@@ -3,10 +3,10 @@
   tasks:
 
     - name: Rename and move SSL certificate
-      command: cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt
+      command: cp /usr/local/apache2/conf/ssl/csr.crt /usr/local/apache2/conf/server.crt
 
     - name: Rename and move SSL key
-      command: cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/server.key
+      command: cp /usr/local/apache2/conf/ssl/csr.key /usr/local/apache2/conf/server.key
 
     - name: Update httpd-ssl.conf with SSL settings
       blockinfile:

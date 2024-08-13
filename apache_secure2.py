@@ -70,6 +70,19 @@ def restart_apache():
     stdout, stderr = run_command(f"docker exec {container_name} apachectl restart")
     print(stdout, stderr)
 
+def copy_testing_html():
+    print("Copying index2.html to the Apache document root...")
+    run_command(f"docker cp index2.html {container_name}:/usr/local/apache2/htdocs/")
+
+def remove_default_index_html():
+    print("Removing default index.html if it exists...")
+    run_command(f"docker exec {container_name} rm -f /usr/local/apache2/htdocs/index.html")
+
+def set_permissions():
+    print("Setting correct permissions for index2.html...")
+    run_command(f"docker exec {container_name} chmod 644 /usr/local/apache2/htdocs/index2.html")
+    run_command(f"docker exec {container_name} chown www-data:www-data /usr/local/apache2/htdocs/index2.html")
+
 def main():
     install_apache_and_openssl()
     create_directories_and_copy_certificates()
@@ -77,6 +90,9 @@ def main():
     include_ssl_conf()
     load_ssl_modules()
     restart_apache()
+    remove_default_index_html()
+    copy_testing_html()
+    set_permissions()
     print("Apache server with SSL has been configured successfully.")
 
 if __name__ == "__main__":

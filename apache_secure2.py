@@ -99,7 +99,7 @@ def enable_ssl_virtual_host():
 
 def restart_apache():
     print("Restarting Apache server...")
-    stdout, stderr = run_command(f"sudo docker exec {container_name} systemctl restart apache2")
+    stdout, stderr = run_command(f"docker exec {container_name} apachectl restart")
     print(stdout, stderr)
 
 def copy_testing_html():
@@ -117,7 +117,7 @@ def set_permissions():
 
 def main():
     print("Entering Docker container clab-firstlab-apache-server...")
-    run_command(f'sudo docker exec -it {container_name} bash -c')  # Ensure we're using the correct shell environment
+    run_command(f'docker exec -it {container_name} bash -c')  # Ensure we're using the correct shell environment
     print("Entered Docker container clab-firstlab-apache-server.")
     install_apache_and_openssl()
     enable_ssl_module()
@@ -132,7 +132,7 @@ def main():
     copy_testing_html()
     set_permissions()
     restart_apache()
-    print("Apache server with SSL has been configured successfully and testing.html is available.")
+    print("Apache server with SSL has been configured successfully and index2.html is available.")
 
 if __name__ == "__main__":
     main()

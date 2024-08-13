@@ -117,7 +117,7 @@ def set_permissions():
 
 def main():
     print("Entering Docker container clab-firstlab-apache-server...")
-    run_command(f'docker exec -it {container_name} bash -c "exit"')  # Ensure we're using the correct shell environment
+    run_command(f'sudo docker exec -it {container_name} bash -c')  # Ensure we're using the correct shell environment
     print("Entered Docker container clab-firstlab-apache-server.")
     install_apache_and_openssl()
     enable_ssl_module()

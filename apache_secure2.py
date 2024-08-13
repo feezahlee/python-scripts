@@ -99,7 +99,7 @@ def enable_ssl_virtual_host():
 
 def restart_apache():
     print("Restarting Apache server...")
-    stdout, stderr = run_command(f"docker exec {container_name} systemctl restart apache2")
+    stdout, stderr = run_command(f"sudo docker exec {container_name} systemctl restart apache2")
     print(stdout, stderr)
 
 def copy_testing_html():

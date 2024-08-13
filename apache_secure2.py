@@ -27,9 +27,9 @@ def enable_ssl_module():
     print(stdout, stderr)
 
 def create_directory(path, mode):
-    print(f"Creating directory {path} with mode {oct(mode)}...")
+    print(f"Creating directory {path} with mode {mode}...")
     run_command(f'docker exec {container_name} mkdir -p {path}')
-    run_command(f'docker exec {container_name} chmod {oct(mode)} {path}')
+    run_command(f'docker exec {container_name} chmod {mode} {path}')
 
 def generate_ssl_certificate():
     print("Generating a self-signed SSL certificate...")
@@ -121,8 +121,8 @@ def main():
     print("Entered Docker container clab-firstlab-apache-server.")
     install_apache_and_openssl()
     enable_ssl_module()
-    create_directory("/etc/ssl/certs", 0o755)
-    create_directory("/etc/ssl/private", 0o700)
+    create_directory("/etc/ssl/certs", "755")
+    create_directory("/etc/ssl/private", "700")
     generate_ssl_certificate()
     configure_apache_ports()
     create_ssl_virtual_host()

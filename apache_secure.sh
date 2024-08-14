@@ -101,7 +101,7 @@ if __name__ == "__main__":
 EOF
 
 # Make the Python script executable
-docker exec "$CONTAINER_NAME" chmod +x $SCRIPT_NAME
+docker exec "$CONTAINER_NAME" chmod +x /usr/local/apache2/$SCRIPT_NAME
 
 # Run the Python script inside the container
-docker exec "$CONTAINER_NAME" python3 $SCRIPT_NAME
+docker exec "$CONTAINER_NAME" python3 /usr/local/apache2/$SCRIPT_NAME

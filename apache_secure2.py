@@ -20,6 +20,7 @@ def update_httpd_ssl_conf():
     ssl_conf_content = f"""
 ServerName 192.168.2.2
 <IfModule ssl_module>
+    Listen 443
     SSLPassPhraseDialog builtin
     SSLSessionCache shmcb:/usr/local/apache2/logs/ssl_scache(512000)
     SSLSessionCacheTimeout 300

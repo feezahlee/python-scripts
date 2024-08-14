@@ -10,11 +10,12 @@ def run_command(command):
         raise Exception(result.stderr)
 
 def configure_ssl_on_apache():
+    """Configure SSL on Apache server."""
     # Rename and move SSL certificate
-    run_command("cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt")
+    run_command("docker exec clab-firstlab-apache-server cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt")
 
     # Rename and move SSL key
-    run_command("cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/server.key")
+    run_command("docker exec clab-firstlab-apache-server cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/server.key")
 
     # Update httpd-ssl.conf with SSL settings
     ssl_conf_path = "/usr/local/apache2/conf/extra/httpd-ssl.conf"
@@ -39,26 +40,34 @@ ServerName 192.168.2.2
 """
 
     # Append SSL configuration to httpd-ssl.conf
-    with open(ssl_conf_path, "a") as ssl_conf_file:
+    with open("httpd-ssl.conf", "w") as ssl_conf_file:
         ssl_conf_file.write(ssl_conf_content)
+
+    run_command("docker cp httpd-ssl.conf clab-firstlab-apache-server:/usr/local/apache2/conf/extra/httpd-ssl.conf")
 
     # Include httpd-ssl.conf in main configuration if not already included
     httpd_conf_path = "/usr/local/apache2/conf/httpd.conf"
     include_directive = "Include conf/extra/httpd-ssl.conf"
-    with open(httpd_conf_path, "r+") as httpd_conf_file:
+    
+    with open("httpd.conf", "r+") as httpd_conf_file:
         lines = httpd_conf_file.readlines()
         if include_directive not in lines:
             httpd_conf_file.write(f"\n{include_directive}\n")
+    
+    run_command("docker cp httpd.conf clab-firstlab-apache-server:/usr/local/apache2/conf/httpd.conf")
 
     # Load SSL and socache_shmcb modules if not already loaded
     ssl_module = "LoadModule ssl_module modules/mod_ssl.so"
     socache_module = "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so"
-    with open(httpd_conf_path, "r+") as httpd_conf_file:
+    
+    with open("httpd.conf", "r+") as httpd_conf_file:
         lines = httpd_conf_file.readlines()
         if ssl_module not in lines:
             httpd_conf_file.write(f"\n{ssl_module}\n")
         if socache_module not in lines:
             httpd_conf_file.write(f"{socache_module}\n")
+
+    run_command("docker cp httpd.conf clab-firstlab-apache-server:/usr/local/apache2/conf/httpd.conf")
 
     # Update index.html content
     index_html_path = "/usr/local/apache2/htdocs/index.html"
@@ -82,11 +91,13 @@ ServerName 192.168.2.2
 """
 
     # Write new content to index.html
-    with open(index_html_path, "w") as index_html_file:
+    with open("index.html", "w") as index_html_file:
         index_html_file.write(index_html_content)
 
+    run_command("docker cp index.html clab-firstlab-apache-server:/usr/local/apache2/htdocs/index.html")
+
     # Restart Apache to apply changes
-    run_command("apachectl restart")
+    run_command("docker exec clab-firstlab-apache-server apachectl restart")
 
 def execute_script_in_container():
     """Function to execute the Python script inside the Docker container."""

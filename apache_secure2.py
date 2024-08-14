@@ -10,6 +10,17 @@ def run_command(command, check=True):
         print(f"Command '{command}' failed with error: {e.stderr.decode()}")
         return None, e.stderr.decode()
 
+def configure_apache():
+    print("Updating Apache configuration...")
+    ssl_modules = [
+        "LoadModule ssl_module modules/mod_ssl.so",
+        "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so",
+        "Include conf/extra/httpd-ssl.conf"
+    ]
+    for module_line in ssl_modules:
+        run_command(f"docker exec {container_name} sh -c 'grep -qxF \"{module_line}\" /usr/local/apache2/conf/httpd.conf || echo \"{module_line}\" >> /usr/local/apache2/conf/httpd.conf'")
+
+
 def rename_and_move_certificates():
     print("Renaming and moving SSL certificate and key...")
     run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt')
@@ -56,6 +67,7 @@ def restart_apache():
     print(stdout, stderr)
 
 def main():
+    configure_apache()
     rename_and_move_certificates()
     update_httpd_ssl_conf()
     include_ssl_conf()

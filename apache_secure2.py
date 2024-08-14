@@ -71,7 +71,7 @@ ServerName 192.168.2.2
 
     <br><br><br>
     <p>Image:</p>
-    <img src="https://images.pexels.com/photos/2253275/pexels-photo-2253275.jpeg" alt="Dog Image" width="500" height="300">
+    <img src="https://www.tp.edu.sg/ecerts/" alt="Dog Image" width="500" height="300">
     <br><br><br>
     <p>Video:</p>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/gGcubGOqDHE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

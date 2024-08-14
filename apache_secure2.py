@@ -12,7 +12,7 @@ def run_command(command):
         print(f"Error running command '{command}': {e.stderr}")
         sys.exit(1)
 
-def rename_and_move_certificates(container_name=None):
+def rename_and_move_certificates(container_name):
     """Rename and move SSL certificates both locally and inside a Docker container."""
     # Define source and destination paths for the certificate and key
     src_crt = '/usr/local/apache2/conf/ssl/apache.crt'
@@ -95,7 +95,7 @@ def load_modules():
 def restart_apache():
     subprocess.run(['apachectl', 'restart'])
 
-def configure_ssl_on_apache(container_name=None):
+def configure_ssl_on_apache(container_name):
     rename_and_move_certificates(container_name)
     update_httpd_ssl_conf()
     include_httpd_ssl_conf()

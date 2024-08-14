@@ -65,16 +65,25 @@ def include_ssl_conf():
 
 def load_ssl_modules():
     print("Loading SSL, socache_shmcb, and MPM modules...")
-    ssl_modules_line = (
+    # Check if modules are already present
+    modules_line = (
         "LoadModule ssl_module modules/mod_ssl.so\n"
         "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so\n"
         "LoadModule mpm_prefork_module modules/mod_mpm_prefork.so"
     )
-    stdout, stderr = run_command(f"docker exec {container_name} sh -c 'echo \"{ssl_modules_line}\" >> /usr/local/apache2/conf/httpd.conf'")
-    if stdout:
-        print(stdout)
-    if stderr:
-        print(stderr)
+    
+    # Append the lines only if they are not already present
+    current_conf, _ = run_command(f"docker exec {container_name} cat /usr/local/apache2/conf/httpd.conf")
+    
+    if not all(module in current_conf for module in modules_line.splitlines()):
+        stdout, stderr = run_command(f"docker exec {container_name} sh -c 'echo \"{modules_line}\" >> /usr/local/apache2/conf/httpd.conf'")
+        if stdout:
+            print(stdout)
+        if stderr:
+            print(stderr)
+    else:
+        print("Modules are already loaded in httpd.conf")
+
 
 def restart_apache():
     print("Restarting Apache server...")

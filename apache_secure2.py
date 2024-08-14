@@ -2,7 +2,7 @@ import subprocess
 
 def run_command_in_container(command):
     """Execute a shell command in the Apache server Docker container and print its output."""
-    full_command = f"sudo docker exec -it clab-firstlab-apache-server {command}"
+    full_command = f"sudo docker exec clab-firstlab-apache-server {command}"
     try:
         result = subprocess.run(full_command, shell=True, check=True, capture_output=True, text=True)
         print(result.stdout)

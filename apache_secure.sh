@@ -74,7 +74,7 @@ ServerName 192.168.2.2
   <body>
     <h1>Hello I am Hafeezah :))</h1>
     <h2 style="font-family: Arial, sans-serif;">The previous 'It works!' has been changed to this!</h2>
-    <h3 style="color: blue;">This webpage has been changed by running Ansible Playbooks from Jenkins.</h3>
+    <h3 style="color: blue;">This webpage has been changed by python script from Jenkins.</h3>
 
     <br><br><br>
     <p>Image:</p>

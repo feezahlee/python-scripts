@@ -24,8 +24,8 @@ def install_apache_and_openssl():
 def create_directories_and_copy_certificates():
     print("Creating directories and copying SSL certificates...")
     run_command(f'docker exec {container_name} mkdir -p /usr/local/apache2/conf/ssl')
-    run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/csr.crt /usr/local/apache2/conf/ssl/server.crt')
-    run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/csr.key /usr/local/apache2/conf/ssl/server.key')
+    run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/ssl/server.crt')
+    run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/ssl/server.key')
 
 def update_httpd_ssl_conf():
     print("Updating httpd-ssl.conf with SSL settings...")

@@ -20,18 +20,15 @@ def update_httpd_ssl_conf():
     ssl_conf_content = f"""
 ServerName 192.168.2.2
 <IfModule ssl_module>
-    Listen 443
     SSLPassPhraseDialog builtin
     SSLSessionCache shmcb:/usr/local/apache2/logs/ssl_scache(512000)
     SSLSessionCacheTimeout 300
-    SSLMutex file:/usr/local/apache2/logs/ssl_mutex
     SSLCertificateFile "/usr/local/apache2/conf/server.crt"
     SSLCertificateKeyFile "/usr/local/apache2/conf/server.key"
     <VirtualHost _default_:443>
         ServerAdmin webmaster@localhost
         DocumentRoot "/usr/local/apache2/htdocs"
         ErrorLog "logs/ssl_error_log"
-        CustomLog "logs/ssl_access_log" common
         SSLEngine on
     </VirtualHost>
 </IfModule>

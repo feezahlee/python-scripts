@@ -88,5 +88,17 @@ ServerName 192.168.2.2
     # Restart Apache to apply changes
     run_command("apachectl restart")
 
+def execute_script_in_container():
+    """Function to execute the Python script inside the Docker container."""
+    container_name = "clab-firstlab-apache-server"
+    script_path = "/root/configure_ssl.py"
+    
+    # Copy the script into the container
+    run_command(f"docker cp configure_ssl.py {container_name}:{script_path}")
+    
+    # Execute the script inside the container
+    run_command(f"docker exec {container_name} python3 {script_path}")
+
 if __name__ == "__main__":
     configure_ssl_on_apache()
+    execute_script_in_container()

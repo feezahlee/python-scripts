@@ -1,22 +1,23 @@
 import subprocess
 
-def run_command_in_container(command):
-    """Execute a shell command in the Apache server Docker container and print its output."""
-    full_command = f"sudo docker exec clab-firstlab-apache-server {command}"
-    try:
-        result = subprocess.run(full_command, shell=True, check=True, capture_output=True, text=True)
-        print(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print(f"Command '{full_command}' failed with error: {e.stderr}")
+container_name = "clab-firstlab-apache-server"
 
-def copy_file(source, destination):
-    """Copy a file from source to destination inside the Docker container."""
-    command = f"cp {source} {destination}"
-    run_command_in_container(command)
+def run_command(command, check=True):
+    try:
+        result = subprocess.run(command, shell=True, check=check, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return result.stdout.decode(), result.stderr.decode()
+    except subprocess.CalledProcessError as e:
+        print(f"Command '{command}' failed with error: {e.stderr.decode()}")
+        return None, e.stderr.decode()
+
+def rename_and_move_certificates():
+    print("Renaming and moving SSL certificate and key...")
+    run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt')
+    run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/server.key')
 
 def update_httpd_ssl_conf():
-    """Update the httpd-ssl.conf with SSL settings inside the Docker container."""
-    ssl_settings = """
+    print("Updating httpd-ssl.conf with SSL settings...")
+    ssl_conf_content = f"""
 ServerName 192.168.2.2
 <IfModule ssl_module>
     Listen 443
@@ -35,31 +36,32 @@ ServerName 192.168.2.2
     </VirtualHost>
 </IfModule>
 """
-    command = f'echo "{ssl_settings}" > /usr/local/apache2/conf/extra/httpd-ssl.conf'
-    run_command_in_container(command)
+    with open("httpd-ssl.conf", 'w') as file:
+        file.write(ssl_conf_content)
+    run_command(f"docker cp httpd-ssl.conf {container_name}:/usr/local/apache2/conf/extra/httpd-ssl.conf")
+    run_command(f"rm httpd-ssl.conf")
 
-def update_httpd_conf():
-    """Update the main httpd.conf file to include the SSL configuration and load modules inside the Docker container."""
-    httpd_conf_path = "/usr/local/apache2/conf/httpd.conf"
-    ssl_include = "Include conf/extra/httpd-ssl.conf\n"
-    ssl_modules = "LoadModule ssl_module modules/mod_ssl.so\nLoadModule socache_shmcb_module modules/mod_socache_shmcb.so\n"
+def include_ssl_conf():
+    print("Including httpd-ssl.conf in main configuration...")
+    run_command(f"docker exec {container_name} sh -c 'echo \"Include conf/extra/httpd-ssl.conf\" >> /usr/local/apache2/conf/httpd.conf'")
 
-    # Appending SSL configurations to the main httpd.conf file
-    run_command_in_container(f'echo "{ssl_include}" >> {httpd_conf_path}')
-    run_command_in_container(f'echo "{ssl_modules}" >> {httpd_conf_path}')
+def load_ssl_modules():
+    print("Loading SSL and socache_shmcb modules...")
+    ssl_modules_line = "LoadModule ssl_module modules/mod_ssl.so\nLoadModule socache_shmcb_module modules/mod_socache_shmcb.so"
+    run_command(f"docker exec {container_name} sh -c 'echo \"{ssl_modules_line}\" >> /usr/local/apache2/conf/httpd.conf'")
 
 def restart_apache():
-    """Restart the Apache server to apply changes inside the Docker container."""
-    run_command_in_container("apachectl restart")
+    print("Restarting Apache server...")
+    stdout, stderr = run_command(f"docker exec {container_name} apachectl restart")
+    print(stdout, stderr)
 
-def configure_apache_ssl():
-    """Main function to configure SSL on Apache inside the Docker container."""
-    print("Configuring SSL on Apache Server...")
-    copy_file("/usr/local/apache2/conf/ssl/apache.crt", "/usr/local/apache2/conf/server.crt")
-    copy_file("/usr/local/apache2/conf/ssl/apache.key", "/usr/local/apache2/conf/server.key")
+def main():
+    rename_and_move_certificates()
     update_httpd_ssl_conf()
-    update_httpd_conf()
+    include_ssl_conf()
+    load_ssl_modules()
     restart_apache()
+    print("Apache server with SSL has been configured successfully.")
 
 if __name__ == "__main__":
-    configure_apache_ssl()
+    main()

@@ -55,6 +55,8 @@ ServerName 192.168.2.2
     # Load SSL and socache_shmcb modules if not already loaded
     ssl_module = "LoadModule ssl_module modules/mod_ssl.so"
     socache_module = "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so"
+    ssl_loaded = False
+    socache_loaded = False
     with open("httpd.conf", "a") as httpd_conf_file:
         httpd_conf_file.write(f"\n{ssl_module}\n")
         httpd_conf_file.write(f"{socache_module}\n")

@@ -1,54 +1,22 @@
-Started by user admin
-[Pipeline] Start of Pipeline
-[Pipeline] node
-Running on Jenkins in /var/lib/jenkins/workspace/apache python
-[Pipeline] {
-[Pipeline] stage
-[Pipeline] { (checkout)
-[Pipeline] checkout
-The recommended git tool is: NONE
-No credentials specified
- > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/apache python/.git # timeout=10
-Fetching changes from the remote Git repository
- > git config remote.origin.url https://github.com/feezahlee/python-scripts.git # timeout=10
-Fetching upstream changes from https://github.com/feezahlee/python-scripts.git
- > git --version # timeout=10
- > git --version # 'git version 2.25.1'
- > git fetch --tags --force --progress -- https://github.com/feezahlee/python-scripts.git +refs/heads/*:refs/remotes/origin/* # timeout=10
- > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
-Checking out Revision f1bdd7daef2ea3663e3cb4d7776940e930372092 (refs/remotes/origin/main)
- > git config core.sparsecheckout # timeout=10
- > git checkout -f f1bdd7daef2ea3663e3cb4d7776940e930372092 # timeout=10
-Commit message: "Update apache_secure2.py"
- > git rev-list --no-walk 59a4a8fb835cb1572eaf5ba01918ac6aa663ee44 # timeout=10
-[Pipeline] }
-[Pipeline] // stage
-[Pipeline] stage
-[Pipeline] { (build)
-[Pipeline] git
-The recommended git tool is: NONE
-No credentials specified
- > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/apache python/.git # timeout=10
-Fetching changes from the remote Git repository
- > git config remote.origin.url https://github.com/feezahlee/python-scripts.git # timeout=10
-Fetching upstream changes from https://github.com/feezahlee/python-scripts.git
- > git --version # timeout=10
- > git --version # 'git version 2.25.1'
- > git fetch --tags --force --progress -- https://github.com/feezahlee/python-scripts.git +refs/heads/*:refs/remotes/origin/* # timeout=10
- > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
-Checking out Revision f1bdd7daef2ea3663e3cb4d7776940e930372092 (refs/remotes/origin/main)
- > git config core.sparsecheckout # timeout=10
- > git checkout -f f1bdd7daef2ea3663e3cb4d7776940e930372092 # timeout=10
- > git branch -a -v --no-abbrev # timeout=10
- > git branch -D main # timeout=10
- > git checkout -b main f1bdd7daef2ea3663e3cb4d7776940e930372092 # timeout=10
-Commit message: "Update apache_secure2.py"
-[Pipeline] sh
-+ python3 apache_secure2.py
-Configuring SSL on Apache Server...
+import subprocess
 
+def run_command_in_container(command):
+    """Execute a shell command in the Apache server Docker container and print its output."""
+    full_command = f"sudo docker exec clab-firstlab-apache-server {command}"
+    try:
+        result = subprocess.run(full_command, shell=True, check=True, capture_output=True, text=True)
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"Command '{full_command}' failed with error: {e.stderr}")
 
-Command 'sudo docker exec clab-firstlab-apache-server echo "
+def copy_file(source, destination):
+    """Copy a file from source to destination inside the Docker container."""
+    command = f"cp {source} {destination}"
+    run_command_in_container(command)
+
+def update_httpd_ssl_conf():
+    """Update the httpd-ssl.conf with SSL settings inside the Docker container."""
+    ssl_settings = """
 ServerName 192.168.2.2
 <IfModule ssl_module>
     Listen 443
@@ -66,28 +34,32 @@ ServerName 192.168.2.2
         SSLEngine on
     </VirtualHost>
 </IfModule>
-" > /usr/local/apache2/conf/extra/httpd-ssl.conf' failed with error: /bin/sh: 1: cannot create /usr/local/apache2/conf/extra/httpd-ssl.conf: Directory nonexistent
+"""
+    command = f'echo "{ssl_settings}" > /usr/local/apache2/conf/extra/httpd-ssl.conf'
+    run_command_in_container(command)
 
-Command 'sudo docker exec clab-firstlab-apache-server echo "Include conf/extra/httpd-ssl.conf
-" >> /usr/local/apache2/conf/httpd.conf' failed with error: /bin/sh: 1: cannot create /usr/local/apache2/conf/httpd.conf: Directory nonexistent
+def update_httpd_conf():
+    """Update the main httpd.conf file to include the SSL configuration and load modules inside the Docker container."""
+    httpd_conf_path = "/usr/local/apache2/conf/httpd.conf"
+    ssl_include = "Include conf/extra/httpd-ssl.conf\n"
+    ssl_modules = "LoadModule ssl_module modules/mod_ssl.so\nLoadModule socache_shmcb_module modules/mod_socache_shmcb.so\n"
 
-Command 'sudo docker exec clab-firstlab-apache-server echo "LoadModule ssl_module modules/mod_ssl.so
-LoadModule socache_shmcb_module modules/mod_socache_shmcb.so
-" >> /usr/local/apache2/conf/httpd.conf' failed with error: /bin/sh: 1: cannot create /usr/local/apache2/conf/httpd.conf: Directory nonexistent
+    # Appending SSL configurations to the main httpd.conf file
+    run_command_in_container(f'echo "{ssl_include}" >> {httpd_conf_path}')
+    run_command_in_container(f'echo "{ssl_modules}" >> {httpd_conf_path}')
 
-Command 'sudo docker exec clab-firstlab-apache-server apachectl restart' failed with error: [Wed Aug 14 03:55:12.428876 2024] [so:warn] [pid 1241:tid 1241] AH01574: module ssl_module is already loaded, skipping
-[Wed Aug 14 03:55:12.428912 2024] [so:warn] [pid 1241:tid 1241] AH01574: module socache_shmcb_module is already loaded, skipping
-AH00534: httpd: Configuration error: No MPM loaded.
+def restart_apache():
+    """Restart the Apache server to apply changes inside the Docker container."""
+    run_command_in_container("apachectl restart")
 
-[Pipeline] }
-[Pipeline] // stage
-[Pipeline] stage
-[Pipeline] { (Test)
-[Pipeline] echo
-the job has been tested
-[Pipeline] }
-[Pipeline] // stage
-[Pipeline] }
-[Pipeline] // node
-[Pipeline] End of Pipeline
-Finished: SUCCESS
+def configure_apache_ssl():
+    """Main function to configure SSL on Apache inside the Docker container."""
+    print("Configuring SSL on Apache Server...")
+    copy_file("/usr/local/apache2/conf/ssl/apache.crt", "/usr/local/apache2/conf/server.crt")
+    copy_file("/usr/local/apache2/conf/ssl/apache.key", "/usr/local/apache2/conf/server.key")
+    update_httpd_ssl_conf()
+    update_httpd_conf()
+    restart_apache()
+
+if __name__ == "__main__":
+    configure_apache_ssl()

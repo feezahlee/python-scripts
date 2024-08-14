@@ -66,7 +66,7 @@ ServerName 192.168.2.2
 <html>
   <body>
     <div style="background-color: red; color: white; padding: 20px; text-align: center;">
-      <h1>Hello Temasek Polytechnic :))</h1>
+      <h1>Hello Temasek Polytechnic!!!</h1>
     </div>
     <h2 style="font-family: Arial, sans-serif;">The previous 'It works!' has been changed to this!</h2>
     <h3 style="color: blue;">This webpage has been changed by running python script from Jenkins.</h3>

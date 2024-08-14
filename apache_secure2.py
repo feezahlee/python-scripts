@@ -46,8 +46,12 @@ def include_ssl_conf():
     run_command(f"docker exec {container_name} sh -c 'echo \"Include conf/extra/httpd-ssl.conf\" >> /usr/local/apache2/conf/httpd.conf'")
 
 def load_ssl_modules():
-    print("Loading SSL and socache_shmcb modules...")
-    ssl_modules_line = "LoadModule ssl_module modules/mod_ssl.so\nLoadModule socache_shmcb_module modules/mod_socache_shmcb.so"
+    print("Loading SSL, socache_shmcb, and MPM modules...")
+    ssl_modules_line = (
+        "LoadModule ssl_module modules/mod_ssl.so\n"
+        "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so\n"
+        "LoadModule mpm_prefork_module modules/mod_mpm_prefork.so"  # Adjust to the MPM module you need
+    )
     run_command(f"docker exec {container_name} sh -c 'echo \"{ssl_modules_line}\" >> /usr/local/apache2/conf/httpd.conf'")
 
 def restart_apache():

@@ -46,7 +46,6 @@ ServerName 192.168.2.2
 </IfModule>
 """
 
-    # Append SSL configuration to httpd-ssl.conf
     with open(ssl_conf_path, "a") as ssl_conf_file:
         ssl_conf_file.write(ssl_conf_content)
 
@@ -89,7 +88,6 @@ ServerName 192.168.2.2
 </html>
 """
 
-    # Write new content to index.html
     with open(index_html_path, "w") as index_html_file:
         index_html_file.write(index_html_content)
 
@@ -101,7 +99,7 @@ if __name__ == "__main__":
 EOF
 
 # Make the Python script executable
-docker exec -it "$CONTAINER_NAME" chmod +x /usr/local/apache2/$SCRIPT_NAME
+docker exec "$CONTAINER_NAME" chmod +x /usr/local/apache2/$SCRIPT_NAME
 
 # Run the Python script inside the container
-docker exec -it "$CONTAINER_NAME" python3 /usr/local/apache2/$SCRIPT_NAME
+docker exec "$CONTAINER_NAME" python3 /usr/local/apache2/$SCRIPT_NAME

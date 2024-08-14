@@ -1,18 +1,20 @@
 #!/bin/bash
 
-# Name of the Docker container
+# Define the container name and script paths
 CONTAINER_NAME="clab-firstlab-apache-server"
+PYTHON_SCRIPT_PATH="/usr/local/apache2/conf/apache_secure2.py"
 
-# Python script content
-PYTHON_SCRIPT='import subprocess
+# Enter the Docker container and use nano to create/edit the Python script
+docker exec -it "$CONTAINER_NAME" bash -c "cat > $PYTHON_SCRIPT_PATH" << 'EOF'
+import subprocess
 
 def run_command(command):
     """Function to run shell commands."""
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
     if result.returncode == 0:
-        print(f"Command \'{command}\' executed successfully.")
+        print(f"Command '{command}' executed successfully.")
     else:
-        print(f"Error executing \'{command}\': {result.stderr}")
+        print(f"Error executing '{command}': {result.stderr}")
         raise Exception(result.stderr)
 
 def configure_ssl_on_apache():
@@ -54,7 +56,7 @@ ServerName 192.168.2.2
     with open(httpd_conf_path, "r+") as httpd_conf_file:
         lines = httpd_conf_file.readlines()
         if include_directive not in lines:
-            httpd_conf_file.write(f"\\n{include_directive}\\n")
+            httpd_conf_file.write(f"\n{include_directive}\n")
 
     # Load SSL and socache_shmcb modules if not already loaded
     ssl_module = "LoadModule ssl_module modules/mod_ssl.so"
@@ -62,9 +64,9 @@ ServerName 192.168.2.2
     with open(httpd_conf_path, "r+") as httpd_conf_file:
         lines = httpd_conf_file.readlines()
         if ssl_module not in lines:
-            httpd_conf_file.write(f"\\n{ssl_module}\\n")
+            httpd_conf_file.write(f"\n{ssl_module}\n")
         if socache_module not in lines:
-            httpd_conf_file.write(f"{socache_module}\\n")
+            httpd_conf_file.write(f"{socache_module}\n")
 
     # Update index.html content
     index_html_path = "/usr/local/apache2/htdocs/index.html"
@@ -95,10 +97,11 @@ ServerName 192.168.2.2
     run_command("apachectl restart")
 
 if __name__ == "__main__":
-    configure_ssl_on_apache()'
+    configure_ssl_on_apache()
+EOF
 
-# Create the python script inside the container
-docker exec $CONTAINER_NAME bash -c "echo \"$PYTHON_SCRIPT\" > /usr/local/apache2/apache_secure2.py"
+# Make the Python script executable
+docker exec "$CONTAINER_NAME" chmod +x $PYTHON_SCRIPT_PATH
 
-# Run the python script inside the container
-docker exec $CONTAINER_NAME python /usr/local/apache2/apache_secure2.py
+# Run the Python script inside the container
+docker exec "$CONTAINER_NAME" python3 $PYTHON_SCRIPT_PATH

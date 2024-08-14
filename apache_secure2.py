@@ -1,108 +1,92 @@
-import shutil
-import os
-import sys
 import subprocess
 
 def run_command(command):
-    """Run a system command and handle errors."""
-    try:
-        result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
-        print(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print(f"Error running command '{command}': {e.stderr}")
-        sys.exit(1)
+    """Function to run shell commands."""
+    result = subprocess.run(command, shell=True, capture_output=True, text=True)
+    if result.returncode == 0:
+        print(f"Command '{command}' executed successfully.")
+    else:
+        print(f"Error executing '{command}': {result.stderr}")
+        raise Exception(result.stderr)
 
-def rename_and_move_certificates(container_name):
-    """Rename and move SSL certificates both locally and inside a Docker container."""
-    # Define source and destination paths for the certificate and key
-    src_crt = '/usr/local/apache2/conf/ssl/apache.crt'
-    dest_crt = '/usr/local/apache2/conf/server.crt'
-    src_key = '/usr/local/apache2/conf/ssl/apache.key'
-    dest_key = '/usr/local/apache2/conf/server.key'
+def configure_ssl_on_apache():
+    # Rename and move SSL certificate
+    run_command("cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt")
 
-    # Check if the source files exist locally
-    if not os.path.isfile(src_crt):
-        print(f"Error: Source certificate file does not exist: {src_crt}")
-        sys.exit(1)
-    if not os.path.isfile(src_key):
-        print(f"Error: Source key file does not exist: {src_key}")
-        sys.exit(1)
+    # Rename and move SSL key
+    run_command("cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/server.key")
 
-    # Copy the certificate and key to the new locations locally
-    try:
-        shutil.copy(src_crt, dest_crt)
-        print(f"Certificate copied from {src_crt} to {dest_crt}")
-    except Exception as e:
-        print(f"Error copying certificate: {e}")
-        sys.exit(1)
-
-    try:
-        shutil.copy(src_key, dest_key)
-        print(f"Key copied from {src_key} to {dest_key}")
-    except Exception as e:
-        print(f"Error copying key: {e}")
-        sys.exit(1)
-
-    # If container_name is provided, copy files into the Docker container
-    if container_name:
-        # Use Docker commands to copy the files inside the container
-        try:
-            run_command(f'docker cp {src_crt} {container_name}:{dest_crt}')
-            print(f"Certificate copied to container {container_name} at {dest_crt}")
-        except Exception as e:
-            print(f"Error copying certificate to container: {e}")
-            sys.exit(1)
-
-        try:
-            run_command(f'docker cp {src_key} {container_name}:{dest_key}')
-            print(f"Key copied to container {container_name} at {dest_key}")
-        except Exception as e:
-            print(f"Error copying key to container: {e}")
-            sys.exit(1)
-
-def update_httpd_ssl_conf():
-    block = """
+    # Update httpd-ssl.conf with SSL settings
+    ssl_conf_path = "/usr/local/apache2/conf/extra/httpd-ssl.conf"
+    ssl_conf_content = """
 ServerName 192.168.2.2
 <IfModule ssl_module>
-  Listen 443
-  SSLPassPhraseDialog  builtin
-  SSLSessionCache       shmcb:/usr/local/apache2/logs/ssl_scache(512000)
-  SSLSessionCacheTimeout  300
-  SSLMutex  file:/usr/local/apache2/logs/ssl_mutex
-  SSLCertificateFile "/usr/local/apache2/conf/server.crt"
-  SSLCertificateKeyFile "/usr/local/apache2/conf/server.key"
-  <VirtualHost _default_:443>
-    ServerAdmin webmaster@localhost
-    DocumentRoot "/usr/local/apache2/htdocs"
-    ErrorLog "logs/ssl_error_log"
-    CustomLog "logs/ssl_access_log" common
-    SSLEngine on
-  </VirtualHost>
+    Listen 443
+    SSLPassPhraseDialog  builtin
+    SSLSessionCache       shmcb:/usr/local/apache2/logs/ssl_scache(512000)
+    SSLSessionCacheTimeout  300
+    SSLMutex  file:/usr/local/apache2/logs/ssl_mutex
+    SSLCertificateFile "/usr/local/apache2/conf/server.crt"
+    SSLCertificateKeyFile "/usr/local/apache2/conf/server.key"
+<VirtualHost _default_:443>
+        ServerAdmin webmaster@localhost
+        DocumentRoot "/usr/local/apache2/htdocs"
+        ErrorLog "logs/ssl_error_log"
+        CustomLog "logs/ssl_access_log" common
+        SSLEngine on
+</VirtualHost>
 </IfModule>
 """
-    with open('/usr/local/apache2/conf/extra/httpd-ssl.conf', 'a') as f:
-        f.write(block)
 
-def include_httpd_ssl_conf():
-    with open('/usr/local/apache2/conf/httpd.conf', 'a') as f:
-        f.write('\nInclude conf/extra/httpd-ssl.conf\n')
+    # Append SSL configuration to httpd-ssl.conf
+    with open(ssl_conf_path, "a") as ssl_conf_file:
+        ssl_conf_file.write(ssl_conf_content)
 
-def load_modules():
-    with open('/usr/local/apache2/conf/httpd.conf', 'a') as f:
-        f.write('\nLoadModule ssl_module modules/mod_ssl.so\n')
-        f.write('LoadModule socache_shmcb_module modules/mod_socache_shmcb.so\n')
+    # Include httpd-ssl.conf in main configuration if not already included
+    httpd_conf_path = "/usr/local/apache2/conf/httpd.conf"
+    include_directive = "Include conf/extra/httpd-ssl.conf"
+    with open(httpd_conf_path, "r+") as httpd_conf_file:
+        lines = httpd_conf_file.readlines()
+        if include_directive not in lines:
+            httpd_conf_file.write(f"\n{include_directive}\n")
 
-def restart_apache():
-    subprocess.run(['apachectl', 'restart'])
+    # Load SSL and socache_shmcb modules if not already loaded
+    ssl_module = "LoadModule ssl_module modules/mod_ssl.so"
+    socache_module = "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so"
+    with open(httpd_conf_path, "r+") as httpd_conf_file:
+        lines = httpd_conf_file.readlines()
+        if ssl_module not in lines:
+            httpd_conf_file.write(f"\n{ssl_module}\n")
+        if socache_module not in lines:
+            httpd_conf_file.write(f"{socache_module}\n")
 
-def configure_ssl_on_apache(container_name):
-    rename_and_move_certificates(container_name)
-    update_httpd_ssl_conf()
-    include_httpd_ssl_conf()
-    load_modules()
-    restart_apache()
+    # Update index.html content
+    index_html_path = "/usr/local/apache2/htdocs/index.html"
+    index_html_content = """
+<html>
+  <body>
+    <h1>Hello I am Yan Yan :))</h1>
+    <h2 style="font-family: Arial, sans-serif;">The previous 'It works!' has been changed to this!</h2>
+    <h3 style="color: blue;">This webpage has been changed by running Ansible Playbooks from Jenkins.</h3>
+
+    <br><br><br>
+    <p>Image:</p>
+    <img src="https://images.pexels.com/photos/2253275/pexels-photo-2253275.jpeg" alt="Dog Image" width="500" height="300">
+    <br><br><br>
+    <p>Video:</p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/gGcubGOqDHE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <br><br><br>
+    <p>All images and videos used are free of copyright and available for public use.</p>
+  </body>
+</html>
+"""
+
+    # Write new content to index.html
+    with open(index_html_path, "w") as index_html_file:
+        index_html_file.write(index_html_content)
+
+    # Restart Apache to apply changes
+    run_command("apachectl restart")
 
 if __name__ == "__main__":
-    # Replace 'your_container_name' with the actual name of your Docker container
-    container_name = 'clab-firstlab-apache-server'  # Set to None if not copying into a container
-    configure_ssl_on_apache(container_name)
+    configure_ssl_on_apache()

@@ -12,12 +12,20 @@ def run_command(command, check=True):
 
 def rename_and_move_certificates():
     print("Renaming and moving SSL certificate and key...")
-    run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt')
-    run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/server.key')
+    stdout, stderr = run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt')
+    if stdout:
+        print(stdout)
+    if stderr:
+        print(stderr)
+    stdout, stderr = run_command(f'docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/server.key')
+    if stdout:
+        print(stdout)
+    if stderr:
+        print(stderr)
 
 def update_httpd_ssl_conf():
     print("Updating httpd-ssl.conf with SSL settings...")
-    ssl_conf_content = f"""
+    ssl_conf_content = """
 ServerName 192.168.2.2
 <IfModule ssl_module>
     Listen 443
@@ -36,21 +44,37 @@ ServerName 192.168.2.2
 """
     with open("httpd-ssl.conf", 'w') as file:
         file.write(ssl_conf_content)
-    run_command(f"docker cp httpd-ssl.conf {container_name}:/usr/local/apache2/conf/extra/httpd-ssl.conf")
-    run_command(f"rm httpd-ssl.conf")
+    stdout, stderr = run_command(f"docker cp httpd-ssl.conf {container_name}:/usr/local/apache2/conf/extra/httpd-ssl.conf")
+    if stdout:
+        print(stdout)
+    if stderr:
+        print(stderr)
+    stdout, stderr = run_command(f"rm httpd-ssl.conf")
+    if stdout:
+        print(stdout)
+    if stderr:
+        print(stderr)
 
 def include_ssl_conf():
     print("Including httpd-ssl.conf in main configuration...")
-    run_command(f"docker exec {container_name} sh -c 'echo \"Include conf/extra/httpd-ssl.conf\" >> /usr/local/apache2/conf/httpd.conf'")
+    stdout, stderr = run_command(f"docker exec {container_name} sh -c 'echo \"Include conf/extra/httpd-ssl.conf\" >> /usr/local/apache2/conf/httpd.conf'")
+    if stdout:
+        print(stdout)
+    if stderr:
+        print(stderr)
 
 def load_ssl_modules():
     print("Loading SSL, socache_shmcb, and MPM modules...")
     ssl_modules_line = (
         "LoadModule ssl_module modules/mod_ssl.so\n"
         "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so\n"
-        "LoadModule mpm_prefork_module modules/mod_mpm_prefork.so"  # Adjust to the MPM module you need
+        "LoadModule mpm_prefork_module modules/mod_mpm_prefork.so"
     )
-    run_command(f"docker exec {container_name} sh -c 'echo \"{ssl_modules_line}\" >> /usr/local/apache2/conf/httpd.conf'")
+    stdout, stderr = run_command(f"docker exec {container_name} sh -c 'echo \"{ssl_modules_line}\" >> /usr/local/apache2/conf/httpd.conf'")
+    if stdout:
+        print(stdout)
+    if stderr:
+        print(stderr)
 
 def restart_apache():
     print("Restarting Apache server...")

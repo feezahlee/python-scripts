@@ -69,7 +69,6 @@ def load_ssl_modules():
     modules_line = (
         "LoadModule ssl_module modules/mod_ssl.so\n"
         "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so\n"
-        "LoadModule mpm_prefork_module modules/mod_mpm_prefork.so"
     )
     
     # Append the lines only if they are not already present

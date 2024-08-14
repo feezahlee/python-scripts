@@ -1,20 +1,21 @@
 import subprocess
 
-def run_command(command):
-    """Execute a shell command and print its output."""
+def run_command_in_container(command):
+    """Execute a shell command in the Apache server Docker container and print its output."""
+    full_command = f"sudo docker exec -it clab-firstlab-apache-server {command}"
     try:
-        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+        result = subprocess.run(full_command, shell=True, check=True, capture_output=True, text=True)
         print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print(f"Command '{command}' failed with error: {e.stderr}")
+        print(f"Command '{full_command}' failed with error: {e.stderr}")
 
 def copy_file(source, destination):
-    """Copy a file from source to destination."""
+    """Copy a file from source to destination inside the Docker container."""
     command = f"cp {source} {destination}"
-    run_command(command)
+    run_command_in_container(command)
 
 def update_httpd_ssl_conf():
-    """Update the httpd-ssl.conf with SSL settings."""
+    """Update the httpd-ssl.conf with SSL settings inside the Docker container."""
     ssl_settings = """
 ServerName 192.168.2.2
 <IfModule ssl_module>
@@ -34,25 +35,25 @@ ServerName 192.168.2.2
     </VirtualHost>
 </IfModule>
 """
-    with open("/usr/local/apache2/conf/extra/httpd-ssl.conf", "w") as file:
-        file.write(ssl_settings)
+    command = f'echo "{ssl_settings}" > /usr/local/apache2/conf/extra/httpd-ssl.conf'
+    run_command_in_container(command)
 
 def update_httpd_conf():
-    """Update the main httpd.conf file to include the SSL configuration and load modules."""
+    """Update the main httpd.conf file to include the SSL configuration and load modules inside the Docker container."""
     httpd_conf_path = "/usr/local/apache2/conf/httpd.conf"
     ssl_include = "Include conf/extra/httpd-ssl.conf\n"
     ssl_modules = "LoadModule ssl_module modules/mod_ssl.so\nLoadModule socache_shmcb_module modules/mod_socache_shmcb.so\n"
 
-    with open(httpd_conf_path, "a") as file:
-        file.write(ssl_include)
-        file.write(ssl_modules)
+    # Appending SSL configurations to the main httpd.conf file
+    run_command_in_container(f'echo "{ssl_include}" >> {httpd_conf_path}')
+    run_command_in_container(f'echo "{ssl_modules}" >> {httpd_conf_path}')
 
 def restart_apache():
-    """Restart the Apache server to apply changes."""
-    run_command("apachectl restart")
+    """Restart the Apache server to apply changes inside the Docker container."""
+    run_command_in_container("apachectl restart")
 
 def configure_apache_ssl():
-    """Main function to configure SSL on Apache."""
+    """Main function to configure SSL on Apache inside the Docker container."""
     print("Configuring SSL on Apache Server...")
     copy_file("/usr/local/apache2/conf/ssl/apache.crt", "/usr/local/apache2/conf/server.crt")
     copy_file("/usr/local/apache2/conf/ssl/apache.key", "/usr/local/apache2/conf/server.key")

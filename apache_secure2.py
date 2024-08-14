@@ -1,7 +1,7 @@
 import subprocess
 
 def run_command(command):
-    """Function to run shell commands."""
+    """Function to run shell commands inside the Docker container."""
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
     if result.returncode == 0:
         print(f"Command '{command}' executed successfully.")
@@ -10,12 +10,13 @@ def run_command(command):
         raise Exception(result.stderr)
 
 def configure_ssl_on_apache():
-    """Configure SSL on Apache server."""
+    container_name = "clab-firstlab-apache-server"
+    
     # Rename and move SSL certificate
-    run_command("docker exec clab-firstlab-apache-server cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt")
+    run_command(f"docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt")
 
     # Rename and move SSL key
-    run_command("docker exec clab-firstlab-apache-server cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/server.key")
+    run_command(f"docker exec {container_name} cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/server.key")
 
     # Update httpd-ssl.conf with SSL settings
     ssl_conf_path = "/usr/local/apache2/conf/extra/httpd-ssl.conf"
@@ -42,39 +43,29 @@ ServerName 192.168.2.2
     # Append SSL configuration to httpd-ssl.conf
     with open("httpd-ssl.conf", "w") as ssl_conf_file:
         ssl_conf_file.write(ssl_conf_content)
-
-    run_command("docker cp httpd-ssl.conf clab-firstlab-apache-server:/usr/local/apache2/conf/extra/httpd-ssl.conf")
+    run_command(f"docker cp httpd-ssl.conf {container_name}:{ssl_conf_path}")
 
     # Include httpd-ssl.conf in main configuration if not already included
     httpd_conf_path = "/usr/local/apache2/conf/httpd.conf"
     include_directive = "Include conf/extra/httpd-ssl.conf"
-    
-    with open("httpd.conf", "r+") as httpd_conf_file:
-        lines = httpd_conf_file.readlines()
-        if include_directive not in lines:
-            httpd_conf_file.write(f"\n{include_directive}\n")
-    
-    run_command("docker cp httpd.conf clab-firstlab-apache-server:/usr/local/apache2/conf/httpd.conf")
+    with open("httpd.conf", "w") as httpd_conf_file:
+        httpd_conf_file.write(f"\n{include_directive}\n")
+    run_command(f"docker cp httpd.conf {container_name}:{httpd_conf_path}")
 
     # Load SSL and socache_shmcb modules if not already loaded
     ssl_module = "LoadModule ssl_module modules/mod_ssl.so"
     socache_module = "LoadModule socache_shmcb_module modules/mod_socache_shmcb.so"
-    
-    with open("httpd.conf", "r+") as httpd_conf_file:
-        lines = httpd_conf_file.readlines()
-        if ssl_module not in lines:
-            httpd_conf_file.write(f"\n{ssl_module}\n")
-        if socache_module not in lines:
-            httpd_conf_file.write(f"{socache_module}\n")
-
-    run_command("docker cp httpd.conf clab-firstlab-apache-server:/usr/local/apache2/conf/httpd.conf")
+    with open("httpd.conf", "a") as httpd_conf_file:
+        httpd_conf_file.write(f"\n{ssl_module}\n")
+        httpd_conf_file.write(f"{socache_module}\n")
+    run_command(f"docker cp httpd.conf {container_name}:{httpd_conf_path}")
 
     # Update index.html content
     index_html_path = "/usr/local/apache2/htdocs/index.html"
     index_html_content = """
 <html>
   <body>
-    <h1>Hello I am Hafeezah :))</h1>
+    <h1>Hello I am Yan Yan :))</h1>
     <h2 style="font-family: Arial, sans-serif;">The previous 'It works!' has been changed to this!</h2>
     <h3 style="color: blue;">This webpage has been changed by running Ansible Playbooks from Jenkins.</h3>
 
@@ -93,23 +84,10 @@ ServerName 192.168.2.2
     # Write new content to index.html
     with open("index.html", "w") as index_html_file:
         index_html_file.write(index_html_content)
-
-    run_command("docker cp index.html clab-firstlab-apache-server:/usr/local/apache2/htdocs/index.html")
+    run_command(f"docker cp index.html {container_name}:{index_html_path}")
 
     # Restart Apache to apply changes
-    run_command("docker exec clab-firstlab-apache-server apachectl restart")
-
-def execute_script_in_container():
-    """Function to execute the Python script inside the Docker container."""
-    container_name = "clab-firstlab-apache-server"
-    script_path = "/root/configure_ssl.py"
-    
-    # Copy the script into the container
-    run_command(f"docker cp configure_ssl.py {container_name}:{script_path}")
-    
-    # Execute the script inside the container
-    run_command(f"docker exec {container_name} python3 {script_path}")
+    run_command(f"docker exec {container_name} apachectl restart")
 
 if __name__ == "__main__":
     configure_ssl_on_apache()
-    execute_script_in_container()

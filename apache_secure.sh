@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Define the container name and script paths
+# Define the container name and script name
 CONTAINER_NAME="clab-firstlab-apache-server"
-PYTHON_SCRIPT_PATH="/usr/local/apache2/apache_secure2.py"
+SCRIPT_NAME="apache_secure2.py"
 
 # Enter the Docker container and create/edit the Python script
-docker exec -it "$CONTAINER_NAME" bash -c "cat > $PYTHON_SCRIPT_PATH" << 'EOF'
+docker exec -it "$CONTAINER_NAME" bash -c "cat > /usr/local/apache2/$SCRIPT_NAME" << 'EOF'
 import subprocess
 
 def run_command(command):
@@ -101,7 +101,7 @@ if __name__ == "__main__":
 EOF
 
 # Make the Python script executable
-docker exec "$CONTAINER_NAME" chmod +x $PYTHON_SCRIPT_PATH
+docker exec "$CONTAINER_NAME" chmod +x /usr/local/apache2/$SCRIPT_NAME
 
 # Run the Python script inside the container
-docker exec "$CONTAINER_NAME" python3 $PYTHON_SCRIPT_PATH
+docker exec "$CONTAINER_NAME" python3 /usr/local/apache2/$SCRIPT_NAME

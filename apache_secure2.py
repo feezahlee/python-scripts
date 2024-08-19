@@ -11,10 +11,10 @@ def run_command(command):
 
 def configure_ssl_on_apache():
     # Rename and move SSL certificate
-    run_command("cp /usr/local/apache2/conf/ssl/apache.crt /usr/local/apache2/conf/server.crt")
+    run_command("cp /usr/local/apache2/conf/ssl/csr.crt /usr/local/apache2/conf/server.crt")
 
     # Rename and move SSL key
-    run_command("cp /usr/local/apache2/conf/ssl/apache.key /usr/local/apache2/conf/server.key")
+    run_command("cp /usr/local/apache2/conf/ssl/csr.key /usr/local/apache2/conf/server.key")
 
     # Update httpd-ssl.conf with SSL settings
     ssl_conf_path = "/usr/local/apache2/conf/extra/httpd-ssl.conf"

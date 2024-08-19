@@ -16,10 +16,7 @@ def main():
 
     # Install required packages inside the container
     install_packages(packages)
-
-    # Remove old IP address from eth1
-    docker_exec("ip addr del 192.168.2.4/24 dev eth1")
-
+    
     # Configure IP address on eth1
     docker_exec("ip addr add 192.168.2.2/24 dev eth1")
 

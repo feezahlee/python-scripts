@@ -12,7 +12,7 @@ def install_packages(packages):
 
 def main():
     # List of packages to install
-    packages = ['net-tools', 'iputils-ping', 'iproute2', 'wget', 'vim']
+    packages = ['net-tools', 'iputils-ping', 'iproute2', 'wget', 'vim', 'python3']
 
     # Install required packages inside the container
     install_packages(packages)
